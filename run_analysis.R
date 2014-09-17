@@ -1,3 +1,43 @@
+
+##reads the 3 necessary train tables into R.
+traindata<-read.table("x_train.txt")
+trainlabel<-read.table("y_train.txt")
+trainsubjects<-read.table("subject_train.txt")
+
+##reads table and creates vector for labels
+features<-read.table("features.txt")
+labels<-c(as.character(features$V2))
+
+##attaches labels traindata
+names(traindata)<-labels
+
+##binds the 3 train tables into 1.
+traindata<-cbind(trainlabel,traindata)
+traindata<-cbind(trainsubjects,traindata)
+
+## reads the 3 test tables into R.
+testdata<-read.table("x_test.txt")
+testlabel<-read.table("y_test.txt")
+testsubjects<-read.table("subject_test.txt")
+
+##attaches labels to testdata
+names(testdata)<-labels
+
+##binds the 3 test tables into 1.
+testdata<-cbind(testlabel,testdata)
+testdata<-cbind(testsubjects,testdata)
+
+##binds the test and train tables together
+newtable<-rbind(traindata,testdata)
+
+##select Mean and Std Colums
+Mean<-c(grep("Mean",labels, value=TRUE))
+mean1<-c(grep("mean",labels, value=TRUE))
+std<-c(grep("std",labels, value=TRUE))
+columns<-append(Mean,mean1)
+columns<-append(columns,std)
+columns<-sort(columns)
+
 ##extracting only mean and std information
 newdata<-newtable[,columns]
 
@@ -29,6 +69,10 @@ tidydata<-dcast(datamelt,patient + activity ~ variable,mean)
 
 ##write the dataset to txt file
 write.table(tidydata,"tidydata.txt", row.names=FALSE)
+
+
+
+
 
 
 
